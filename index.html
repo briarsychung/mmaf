@@ -1,0 +1,22 @@
+<html>
+
+<head>
+</head>
+
+<body>
+  <script>
+    const ws = new WebSocket('wss://mmaf.briarsychung.workers.dev/ws');
+
+    ws.addEventListener('error', console.error);
+
+    ws.addEventListener('open', function open() {
+      ws.send('something');
+    });
+
+    ws.addEventListener('message', function message({ data }) {
+      console.log('received: %s', JSON.stringify(data));
+    });
+  </script>
+</body>
+
+</html>

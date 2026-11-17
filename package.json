@@ -1,0 +1,7 @@
+{
+  "name": "mmaf",
+  "main": "index.js",
+  "dependencies": {
+    "ws": "^7.0.0"
+  }
+}
