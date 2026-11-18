@@ -1,6 +1,6 @@
 {
   "name": "mmaf",
-  "main": "index.js",
+  "main": "src/index.js",
   "compatibility_date": "2026-11-10",
   "durable_objects": {
     "bindings": [

@@ -1,5 +1,5 @@
 import { DurableObject } from 'cloudflare:workers';
-import html from './index.html';
+import html from './public/index.html';
 
 /**
  * @author Silverrzz
