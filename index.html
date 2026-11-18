@@ -1,20 +1,185 @@
 <html>
 
 <head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Figtree');
+
+    * {
+      font-family: "Instrument Sans", sans-serif;
+    }
+
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 60px;
+    }
+
+    p,
+    input {
+      font-size: 54px;
+      margin: 24px;
+    }
+
+    input {
+      border: 2px solid black;
+      border-radius: 0;
+      padding: 10px;
+    }
+
+    input:focus {
+      outline: none;
+    }
+
+    button {
+      border: 2px solid black;
+      border-radius: 0;
+      font-size: 24px;
+      padding: 10px;
+    }
+
+    .slide {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      visibility: hidden;
+    }
+
+    .row {
+      display: flex;
+    }
+
+    .row>* {
+      margin: 5px;
+    }
+
+    #a {
+      visibility: visible;
+    }
+
+    #logo {
+      object-fit: contain;
+      width: 50%;
+    }
+
+    .label {
+      font-size: 24px;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="slide" id="a">
+    <div class="row">
+      <button onclick="setState(0)">Live View</button>
+      <button onclick="setState(1)">Controller View</button>
+    </div>
+  </div>
+  <div class="slide" id="c">
+    <div class="row">
+      <button onclick="ws.send(JSON.stringify({k: 'reset'}))">Reset</button>
+      <button onclick="ws.send(JSON.stringify({k: 'change', v: -1}))">Previous Slide</button>
+      <button onclick="ws.send(JSON.stringify({k: 'change', v: 1}))">Next Slide</button>
+    </div>
+  </div>
+  <div class="slide" id="s0">
+    <img id="logo" src="images/logo.png">
+  </div>
+  <div class="slide" id="s1">
+    <span class="label">Dichotic Listening Task ·<br>P017</span>
+    <h1>Attend to your RIGHT ear.</h1>
+    <p>Identify the sound you hear.</p>
+    <p>Type your response below.</p>
+    <input id="f1">
+    <p>PRESS SPACE TO SUBMIT</p>
+  </div>
+  <div class="slide" id="s2">
+    <span class="label">Dichotic Listening Task ·<br>P017</span>
+    <h1>Attend to your LEFT ear.</h1>
+    <p>Identify the sound you hear.</p>
+    <p>Type your response below.</p>
+    <input id="f2">
+    <p>PRESS SPACE TO SUBMIT</p>
+  </div>
+  <div class="slide" id="s3"></div>
+
   <script>
     const ws = new WebSocket('wss://mmaf.briarsychung.workers.dev/ws');
 
-    ws.addEventListener('error', console.error);
+    let state = -1;
+    let slide = 0;
 
-    ws.addEventListener('open', function open() {
-      ws.send('something');
-    });
+    ws.addEventListener('error', console.error);
+    ws.addEventListener('open', function open() { });
 
     ws.addEventListener('message', function message({ data }) {
-      console.log('received: %s', JSON.stringify(data));
+      if (state !== 0) {
+        return;
+      }
+      data = JSON.parse(data);
+      switch (data.k) {
+        case 'reset':
+          updateSlide(0);
+          break;
+        case 'change':
+          updateSlide(slide + data.v);
+      }
+    });
+
+    function setState(s) {
+      state = s;
+      document.querySelector('#a').style.visibility = 'hidden';
+      switch (state) {
+        case 0:
+          updateSlide(0);
+          break;
+        case 1:
+          document.querySelector('#c').style.visibility = 'visible';
+      }
+    }
+
+    function updateSlide(s) {
+      document.querySelector(`#s${slide}`).style.visibility = 'hidden';
+      slide = Math.max(Math.min(s, 3), 0);
+      document.querySelector(`#s${slide}`).style.visibility = 'visible';
+      let input = document.querySelector(`#f${slide}`);
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    document.addEventListener('keypress', (event) => {
+      if (state !== 0) {
+        return;
+      }
+      switch (slide) {
+        case 0:
+          if (event.code === 'Space') {
+            updateSlide(1);
+          }
+          break;
+        case 1:
+          if (event.code === 'Space') {
+            updateSlide(2);
+          }
+          break;
+        case 2:
+          if (event.code === 'Space') {
+            updateSlide(3);
+          }
+      }
     });
   </script>
 </body>

@@ -1,6 +1,9 @@
 import { DurableObject } from 'cloudflare:workers';
 import html from './index.html';
 
+/**
+ * @author Silverrzz
+ */
 export default {
   fetch(request, env) {
     if (new URL(request.url).pathname !== '/ws') {
