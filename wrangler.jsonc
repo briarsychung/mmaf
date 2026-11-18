@@ -2,6 +2,9 @@
   "name": "mmaf",
   "main": "src/index.js",
   "compatibility_date": "2026-11-10",
+  "assets": {
+    "directory": "./public"
+  },
   "durable_objects": {
     "bindings": [
       { "name": "WSS", "class_name": "WebSocketServer" }

@@ -1,14 +1,10 @@
 import { DurableObject } from 'cloudflare:workers';
-import html from '../public/index.html';
 
 /**
  * @author Silverrzz
  */
 export default {
   fetch(request, env) {
-    if (new URL(request.url).pathname !== '/ws') {
-      return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
-    }
     if (request.headers.get('Upgrade')?.toLowerCase() !== 'websocket') {
       return new Response('Expected websocket', { status: 426 });
     }
